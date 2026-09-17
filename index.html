@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
   <script src="https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js" defer></script>
-  <script src="app-v8.js" defer></script>
+  <script src="app-v9.js" defer></script>
 </head>
 <body>
   <header class="topbar">
@@ -92,12 +92,10 @@
 
       <div class="auto-card">
         <h3>Finn vinen automatisk</h3>
-        <p>Skann strekkoden først. Hvis den ikke finnes, tar du bilde av etiketten.</p>
-        <button id="barcodeBtn" type="button" class="scan barcode">▥ <span>Skann strekkode</span></button>
+        <p>Ta et tydelig bilde av etiketten, så leser appen teksten og søker etter vinen.</p>
         <button id="labelBtn" type="button" class="scan label">◉ <span>Ta bilde av etikett</span></button>
-        <input id="barcodeInput" type="file" accept="image/*" capture="environment" hidden />
         <input id="labelInput" type="file" accept="image/*" capture="environment" hidden />
-        <div id="scanStatus" class="status" role="status" aria-live="polite">Velg strekkode eller etikett.</div>
+        <div id="scanStatus" class="status" role="status" aria-live="polite">Ta bilde av etiketten.</div>
         <img id="scanPreview" class="preview" alt="Forhåndsvisning" hidden />
         <div id="labelCorrection" hidden>
           <label>Tekst fra etiketten
