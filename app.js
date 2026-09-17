@@ -86,6 +86,17 @@ async function barcodeCanvases(url){
     const c=document.createElement('canvas'),sx=Math.round(w*crop[0]),sy=Math.round(h*crop[1]),sw=Math.round(w*crop[2]),sh=Math.round(h*crop[3]);
     c.width=sw;c.height=sh;c.getContext('2d').drawImage(base,sx,sy,sw,sh,0,0,sw,sh);variants.push(c);
   }
+  // iPhone photos often leave the code as a small strip. Scan overlapping
+  // horizontal bands, enlarge them, and add high-contrast copies.
+  for(let y=0;y<=.8;y+=.1){
+    const sx=0,sy=Math.round(h*y),sw=w,sh=Math.max(1,Math.round(h*.2));
+    const band=document.createElement('canvas');band.width=2000;band.height=Math.max(220,Math.round(2000*sh/sw));
+    const ctx=band.getContext('2d');ctx.drawImage(base,sx,sy,sw,sh,0,0,band.width,band.height);variants.push(band);
+    const bw=document.createElement('canvas');bw.width=band.width;bw.height=band.height;
+    const bx=bw.getContext('2d');bx.drawImage(band,0,0);const d=bx.getImageData(0,0,bw.width,bw.height);
+    for(let i=0;i<d.data.length;i+=4){const g=.299*d.data[i]+.587*d.data[i+1]+.114*d.data[i+2];const v=g>145?255:0;d.data[i]=d.data[i+1]=d.data[i+2]=v}
+    bx.putImageData(d,0,0);variants.push(bw);
+  }
   return variants;
 }
 
@@ -148,7 +159,7 @@ async function handleLabel(file){
     if(!query){showStatus('Jeg klarte ikke å lese nok tekst. Ta et skarpere bilde rett forfra.');return}
     showStatus('Etiketten er lest. Søker Vinmonopolet …',true);
     const data=await searchServer({label:query}); setCandidates(data.results);
-    if(data.results?.length)fillCandidate(data.results[0]); else showStatus('Ingen sikker match. Du kan fylle inn manuelt eller prøve et nytt bilde.');
+    if(data.results?.length)fillCandidate(data.results[0]); else showStatus('Etiketten ble lest, men ingen sikker match ble funnet hos Vinmonopolet. Fyll inn manuelt eller prøv et nytt bilde.');
   }catch(e){showStatus(e.message||'Etikettlesingen mislyktes.')}
 }
 
