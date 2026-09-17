@@ -9,10 +9,10 @@
   <title>Vinskap</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="styles-v11.css" />
+  <link rel="stylesheet" href="styles-v12.css" />
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
   <script src="https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js" defer></script>
-  <script src="app-v11.js" defer></script>
+  <script src="app-v12.js" defer></script>
 </head>
 <body>
   <header class="topbar">
@@ -147,6 +147,45 @@
         </div>
         <label>Notat<textarea id="tripText" rows="5"></textarea></label>
         <button class="primary" type="submit">Lagre tur</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="tripDetailModal" class="modal" aria-hidden="true">
+    <div class="sheet trip-detail-sheet">
+      <button class="close" data-close="tripDetailModal" aria-label="Lukk">×</button>
+      <div class="eyebrow">MIN TUR</div>
+      <h2 id="tripDetailTitle">Tur</h2>
+      <img id="tripDetailImage" class="trip-detail-image" alt="Hovedbilde fra turen" hidden />
+      <p id="tripDetailText" class="trip-detail-text"></p>
+      <div class="trip-wine-heading">
+        <div><span class="eyebrow">VINER PÅ TUREN</span><strong id="tripWineCount">0 viner</strong></div>
+        <button id="addTripWineBtn" type="button" class="primary small">+ Legg til vin</button>
+      </div>
+      <div id="tripWineList" class="trip-wine-list"></div>
+    </div>
+  </div>
+
+  <div id="tripWineModal" class="modal" aria-hidden="true">
+    <div class="sheet compact">
+      <button class="close" data-close="tripWineModal" aria-label="Lukk">×</button>
+      <div class="eyebrow">VINMINNE</div><h2>Legg til vin</h2>
+      <form id="tripWineForm">
+        <label>Navn på vin<input id="tripWineName" required placeholder="F.eks. Albariño" /></label>
+        <label>Årgang<input id="tripWineVintage" inputmode="numeric" placeholder="2023" /></label>
+        <div class="trip-photo-field">
+          <span class="field-label">Bilde av vinen</span>
+          <div class="photo-actions">
+            <button id="tripWineCameraBtn" type="button" class="photo-choice camera-choice">◉ Ta bilde</button>
+            <button id="tripWineGalleryBtn" type="button" class="photo-choice gallery-choice">▧ Velg fra bilder</button>
+          </div>
+          <input id="tripWineImageCamera" type="file" accept="image/*" capture="environment" hidden />
+          <input id="tripWineImageGallery" type="file" accept="image/*" hidden />
+          <div id="tripWineImageName" class="photo-name">Ingen bilde valgt</div>
+          <img id="tripWineImagePreview" class="trip-preview" alt="Forhåndsvisning av vinbilde" hidden />
+        </div>
+        <label>Notat<textarea id="tripWineText" rows="4" placeholder="Hva smakte du, og hva vil du huske?"></textarea></label>
+        <button class="primary" type="submit">Lagre vin på turen</button>
       </form>
     </div>
   </div>
