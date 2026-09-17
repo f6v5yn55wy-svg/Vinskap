@@ -9,10 +9,10 @@
   <title>Vinskap</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="styles-v12.css" />
+  <link rel="stylesheet" href="styles-v13.css" />
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
   <script src="https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js" defer></script>
-  <script src="app-v12.js" defer></script>
+  <script src="app-v13.js" defer></script>
 </head>
 <body>
   <header class="topbar">
@@ -169,7 +169,7 @@
   <div id="tripWineModal" class="modal" aria-hidden="true">
     <div class="sheet compact">
       <button class="close" data-close="tripWineModal" aria-label="Lukk">×</button>
-      <div class="eyebrow">VINMINNE</div><h2>Legg til vin</h2>
+      <div class="eyebrow">VINMINNE</div><h2 id="tripWineFormTitle">Legg til vin</h2>
       <form id="tripWineForm">
         <label>Navn på vin<input id="tripWineName" required placeholder="F.eks. Albariño" /></label>
         <label>Årgang<input id="tripWineVintage" inputmode="numeric" placeholder="2023" /></label>
@@ -185,8 +185,20 @@
           <img id="tripWineImagePreview" class="trip-preview" alt="Forhåndsvisning av vinbilde" hidden />
         </div>
         <label>Notat<textarea id="tripWineText" rows="4" placeholder="Hva smakte du, og hva vil du huske?"></textarea></label>
-        <button class="primary" type="submit">Lagre vin på turen</button>
+        <button id="tripWineSaveBtn" class="primary" type="submit">Lagre vin på turen</button>
       </form>
+    </div>
+  </div>
+
+  <div id="tripWineDetailModal" class="modal" aria-hidden="true">
+    <div class="sheet compact trip-wine-detail-sheet">
+      <button class="close" data-close="tripWineDetailModal" aria-label="Lukk">×</button>
+      <div class="eyebrow">VINMINNE</div>
+      <h2 id="tripWineDetailName">Vin</h2>
+      <img id="tripWineDetailImage" class="trip-wine-detail-image" alt="Bilde av vinen" hidden />
+      <div id="tripWineDetailVintage" class="trip-wine-detail-vintage" hidden></div>
+      <p id="tripWineDetailText" class="trip-wine-detail-text" hidden></p>
+      <button id="tripWineDetailEditBtn" type="button" class="primary">Rediger vin</button>
     </div>
   </div>
 </body>
