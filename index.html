@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
   <script src="https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js" defer></script>
-  <script src="app-v7.js" defer></script>
+  <script src="app-v8.js" defer></script>
 </head>
 <body>
   <header class="topbar">
@@ -99,6 +99,12 @@
         <input id="labelInput" type="file" accept="image/*" capture="environment" hidden />
         <div id="scanStatus" class="status" role="status" aria-live="polite">Velg strekkode eller etikett.</div>
         <img id="scanPreview" class="preview" alt="Forhåndsvisning" hidden />
+        <div id="labelCorrection" hidden>
+          <label>Tekst fra etiketten
+            <input id="labelSearchText" type="search" autocomplete="off" placeholder="F.eks. Messmer Riesling" />
+          </label>
+          <button id="labelSearchBtn" type="button" class="primary small">Søk etter vinen</button>
+        </div>
         <div id="candidateList" class="candidate-list"></div>
       </div>
 
