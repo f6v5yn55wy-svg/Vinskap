@@ -1,5 +1,5 @@
-const CACHE='vinskap-v14';
-const ASSETS=['/','/index.html','/styles.css','/styles-v13.css','/app-v14.js','/manifest.json','/icon.svg'];
+const CACHE='vinskap-v15';
+const ASSETS=['/','/index.html','/styles.css','/styles-v13.css','/app-v15.js','/manifest.json','/icon.svg'];
 
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()));
