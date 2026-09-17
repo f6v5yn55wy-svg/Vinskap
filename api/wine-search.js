@@ -1,7 +1,8 @@
 const API='https://apis.vinmonopolet.no/products/v0/details-normal';
 
 function normalize(s=''){return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim()}
-function words(s=''){return normalize(s).split(' ').filter(w=>w.length>2&&!/^\d{4}$/.test(w))}
+const STOP=new Set('appellation controlee protected designation origine product france contains sulfites brut trocken sec wine vin estate bottled mis bouteille alc vol'.split(' '));
+function words(s=''){return normalize(s).split(' ').filter(w=>w.length>2&&!/^\d{4}$/.test(w)&&!STOP.has(w))}
 function field(obj,...paths){for(const p of paths){let x=obj;for(const k of p.split('.'))x=x?.[k];if(x!==undefined&&x!==null&&x!=='')return x}return ''}
 function grapeString(p){const arr=p?.ingredients?.grapes||[];return arr.map(g=>g.grapePct?`${g.grapeDesc} ${g.grapePct}%`:g.grapeDesc).filter(Boolean).join(', ')}
 function mapProduct(p){
@@ -23,15 +24,31 @@ async function barcodeName(barcode){
   try{const r=await fetch(`https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(barcode)}.json?fields=product_name,brands`);if(!r.ok)return '';const j=await r.json();return [j.product?.product_name,j.product?.brands].filter(Boolean).join(' ')}catch{return ''}
 }
 function score(item,query,barcode){
-  let s=0; const q=words(query), hay=normalize([item.name,item.producer,item.country,item.region,item.vintage].join(' '));
-  for(const w of q) if(hay.includes(w)) s+=w.length>6?3:1;
+  let s=0; const q=[...new Set(words(query))], hay=normalize([item.name,item.producer,item.country,item.region,item.vintage].join(' '));
+  for(const w of q) if(hay.includes(w)) s+=w.length>7?4:w.length>5?3:2;
   if(barcode&&item.barcodes?.includes(barcode))s+=100;
   return s;
 }
 function candidatesFromLabel(label){
-  const tokens=words(label).filter(w=>w.length>3); const year=(label.match(/\b(19|20)\d{2}\b/)||[])[0];
-  const phrases=[]; for(let len=5;len>=1;len--){const p=tokens.slice(0,len).join(' ');if(p)phrases.push(p)}
-  if(year)phrases.push(year); return [...new Set(phrases)].slice(0,5);
+  const tokens=words(label).filter(w=>w.length>3);
+  const phrases=[];
+  // Two-word phrases are much safer than stopping at the first generic OCR word.
+  for(let i=0;i<tokens.length-1;i++) phrases.push(`${tokens[i]} ${tokens[i+1]}`);
+  phrases.push(...[...new Set(tokens)].sort((a,b)=>b.length-a.length));
+  return [...new Set(phrases)].slice(0,8);
+}
+
+async function labelSearch(label){
+  const found=new Map();
+  for(const term of candidatesFromLabel(label)){
+    const batch=await vinmonopoletSearch(term).catch(()=>[]);
+    for(const item of batch){
+      const id=String(item.productId||item.name);
+      if(!found.has(id)) found.set(id,item);
+    }
+  }
+  // A label result must share at least two meaningful words (score >= 4).
+  return [...found.values()].map(x=>({...x,score:score(x,label,'')})).filter(x=>x.score>=4);
 }
 
 module.exports=async(req,res)=>{
@@ -41,11 +58,11 @@ module.exports=async(req,res)=>{
     let query=name||label; let results=[];
     if(barcode){
       const lookup=await barcodeName(barcode); query=lookup||'';
-      if(query){for(const t of candidatesFromLabel(query)){results=await vinmonopoletSearch(t).catch(()=>[]);if(results.length)break}}
+      if(query) results=await labelSearch(query);
     }else if(query){
-      for(const t of candidatesFromLabel(query)){results=await vinmonopoletSearch(t).catch(()=>[]);if(results.length)break}
+      results=await labelSearch(query);
     } else return res.status(400).json({error:'Mangler søkegrunnlag.'});
-    results=results.map(x=>({...x,barcode:barcode||x.barcode,score:score(x,query,barcode)})).sort((a,b)=>b.score-a.score).slice(0,10);
+    results=results.map(x=>({...x,barcode:barcode||x.barcode,score:Math.max(x.score||0,score(x,query,barcode))})).sort((a,b)=>b.score-a.score).slice(0,10);
     res.status(200).json({query,results,source:'Vinmonopolet'});
   }catch(e){res.status(500).json({error:e.message||'Ukjent feil'});}
 };
