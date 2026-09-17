@@ -1,0 +1,52 @@
+/* Tydelige soner i vinskapet */
+.section-head{
+  padding-bottom:8px;
+  border-bottom:2px solid rgba(143,23,56,.28);
+}
+.zone{
+  position:relative;
+  overflow:hidden;
+  border-left-width:6px;
+  box-shadow:0 8px 22px rgba(89,24,43,.07);
+}
+.zone::after{
+  content:"";
+  position:absolute;
+  top:0;
+  right:0;
+  width:74px;
+  height:100%;
+  opacity:.12;
+  pointer-events:none;
+}
+.white-zone{
+  border-left-color:#d6bd72;
+  background:linear-gradient(100deg,#fffdf5 0%,#fff 54%);
+}
+.white-zone::after{background:#d6bd72}
+.rose-zone{
+  border-left-color:#d9798f;
+  background:linear-gradient(100deg,#fff4f6 0%,#fff 54%);
+}
+.rose-zone::after{background:#d9798f}
+.red-zone{
+  border-left-color:var(--wine);
+  background:linear-gradient(100deg,#faedf1 0%,#fff 54%);
+}
+.red-zone::after{background:var(--wine)}
+.dot.rose{background:#e9a1b1;border-color:#cc7086}
+.zone h3{color:var(--wine)}
+.zone-meta{position:relative;z-index:1}
+.zone-meta strong{color:var(--wine);font:700 24px Georgia,serif}
+.zone-meta span{font-weight:700}
+
+/* Kamera og bildegalleri for Mine turer */
+.trip-photo-field{display:grid;gap:9px}
+.field-label{font-weight:800}
+.photo-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.photo-choice{border:0;border-radius:16px;padding:15px 12px;color:#fff;font-weight:800;cursor:pointer}
+.camera-choice{background:#151515}
+.gallery-choice{background:var(--wine)}
+.photo-name{color:var(--muted);font-size:13px;padding:0 3px}
+.trip-preview{width:100%;max-height:280px;object-fit:contain;border-radius:16px;background:#eee7e2}
+@media(max-width:420px){.photo-actions{grid-template-columns:1fr}}
