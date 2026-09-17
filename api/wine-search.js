@@ -51,7 +51,7 @@ function rank(w,query){
 }
 async function officialSearch(query,apiKey){
   const headers={'Ocp-Apim-Subscription-Key':apiKey};
-  const params=new URLSearchParams({productShortName:query,maxResults:'60'});
+  const params=new URLSearchParams({productShortNameContains:query,maxResults:'60'});
   const response=await fetch(`${API_ROOT}/details-normal?${params}`,{headers});
   if(!response.ok)throw new Error(`Vinmonopolet svarte ${response.status}`);
   const body=await response.json();
@@ -73,3 +73,4 @@ module.exports=async function handler(req,res){
     return res.status(200).json({source:'Vinmonopolet',results});
   }catch(error){return res.status(502).json({error:error.message||'Vinmonopolet-søket mislyktes.'})}
 }
+
