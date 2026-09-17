@@ -313,7 +313,7 @@ function normalizeWineText(value){
 
 async function labelOcrImages(file){
   const url=await fileToDataURL(file);
-  const img=await loadImage(url);
+  const img=await imageFromUrl(url);
   const make=(crop=false,contrast=false)=>{
     const canvas=document.createElement('canvas');
     const sx=crop?Math.round(img.width*.12):0, sy=crop?Math.round(img.height*.12):0;
@@ -471,3 +471,4 @@ async function init(){
   render();
 }
 init();
+
