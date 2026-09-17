@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="styles-v13.css" />
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
   <script src="https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js" defer></script>
-  <script src="app-v13.js" defer></script>
+  <script src="app-v14.js" defer></script>
 </head>
 <body>
   <header class="topbar">
@@ -94,16 +94,16 @@
 
       <div class="auto-card">
         <h3>Finn vinen automatisk</h3>
-        <p>Ta et tydelig bilde av etiketten, så leser appen teksten og søker etter vinen.</p>
+        <p>Ta bilde av etiketten, eller skriv inn navnet på vinen. Appen søker etter riktig flaske og fyller inn opplysningene automatisk.</p>
         <button id="labelBtn" type="button" class="scan label">◉ <span>Ta bilde av etikett</span></button>
         <input id="labelInput" type="file" accept="image/*" capture="environment" hidden />
         <div id="scanStatus" class="status" role="status" aria-live="polite">Ta bilde av etiketten.</div>
         <img id="scanPreview" class="preview" alt="Forhåndsvisning" hidden />
-        <div id="labelCorrection" hidden>
-          <label>Tekst fra etiketten
-            <input id="labelSearchText" type="search" autocomplete="off" placeholder="F.eks. Messmer Riesling" />
+        <div id="labelCorrection">
+          <label>Søk på vinens navn
+            <input id="labelSearchText" type="search" autocomplete="off" placeholder="F.eks. produsent, vinnavn og årgang" />
           </label>
-          <button id="labelSearchBtn" type="button" class="primary small">Søk etter vinen</button>
+          <button id="labelSearchBtn" type="button" class="primary small">Finn vin og fyll ut</button>
         </div>
         <div id="candidateList" class="candidate-list"></div>
       </div>
