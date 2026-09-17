@@ -1,0 +1,9 @@
+{
+  "name":"Vinskap",
+  "short_name":"Vinskap",
+  "start_url":"/",
+  "display":"standalone",
+  "background_color":"#faf8f5",
+  "theme_color":"#8f1738",
+  "icons":[{"src":"/icon.svg","sizes":"any","type":"image/svg+xml"}]
+}
