@@ -9,9 +9,10 @@
   <title>Vinskap</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles-v10.css" />
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
   <script src="https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js" defer></script>
-  <script src="app-v9.js" defer></script>
+  <script src="app-v10.js" defer></script>
 </head>
 <body>
   <header class="topbar">
@@ -34,8 +35,9 @@
 
       <div class="section-head"><span>SONER</span><button class="link-btn add-wine">+ Legg til</button></div>
       <div class="zones">
-        <article class="zone"><div class="dot white"></div><div><h3>Hvit sone</h3><p>Hvitvin, rosé og musserende</p></div><div class="zone-meta"><strong id="whiteCount">0</strong><span>8 °C</span></div></article>
-        <article class="zone"><div class="dot red"></div><div><h3>Rød sone</h3><p>Rødvin</p></div><div class="zone-meta"><strong id="redCount">0</strong><span>16 °C</span></div></article>
+        <article class="zone white-zone"><div class="dot white"></div><div><h3>Hvit sone</h3><p>Hvitvin og musserende</p></div><div class="zone-meta"><strong id="whiteCount">0</strong><span>8 °C</span></div></article>
+        <article class="zone rose-zone"><div class="dot rose"></div><div><h3>Rosésone</h3><p>Rosévin</p></div><div class="zone-meta"><strong id="roseCount">0</strong><span>8 °C</span></div></article>
+        <article class="zone red-zone"><div class="dot red"></div><div><h3>Rød sone</h3><p>Rødvin og portvin</p></div><div class="zone-meta"><strong id="redCount">0</strong><span>16 °C</span></div></article>
       </div>
 
       <div class="section-head"><span>SIST LAGT TIL</span></div>
