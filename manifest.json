@@ -1,9 +1,1 @@
-{
-  "name":"Vinskap",
-  "short_name":"Vinskap",
-  "start_url":"/",
-  "display":"standalone",
-  "background_color":"#faf8f5",
-  "theme_color":"#8f1738",
-  "icons":[{"src":"/icon.svg","sizes":"any","type":"image/svg+xml"}]
-}
+{"name":"Min vinbok","short_name":"Vinbok","description":"Din personlige vindagbok","start_url":".","display":"standalone","background_color":"#f7f2ee","theme_color":"#7f1734","lang":"no"}

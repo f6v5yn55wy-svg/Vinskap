@@ -1,205 +1,56 @@
 <!doctype html>
 <html lang="no">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#8f1738" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <title>Vinskap</title>
-  <link rel="manifest" href="manifest.json" />
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="styles-v13.css" />
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
-  <script src="https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js" defer></script>
-  <script src="app-v15.js" defer></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#7f1734">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>Min vinbok</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
 </head>
 <body>
   <header class="topbar">
-    <div>
-      <div class="brandmark">V</div>
-      <div>
-        <h1>Vinskap</h1>
-        <p>Din private vinsamling</p>
-      </div>
-    </div>
-    <button id="exportBtn" class="ghost">Backup og eksport ⇩</button>
+    <div class="brand"><div class="brandmark">V</div><div><h1>Min vinbok</h1><p>Viner, minner og opplevelser</p></div></div>
+    <button id="headerAdd" class="round-add" aria-label="Legg til vin">＋</button>
   </header>
-
   <main>
-    <section id="overviewView" class="view active">
-      <div class="stats">
-        <div><strong id="totalBottles">0</strong><span>flasker</span></div>
-        <div><strong id="totalValue">0 kr</strong><span>registrert verdi</span></div>
+    <section id="winesView" class="view active">
+      <div class="hero">
+        <span class="eyebrow">DIN PERSONLIGE VINDAGBOK</span><h2>Mine viner</h2><p>Ta vare på vinene og øyeblikkene du vil huske.</p>
+        <div class="stats"><div><strong id="wineCount">0</strong><span>viner</span></div><div><strong id="favoriteCount">0</strong><span>favoritter</span></div><div><strong id="experienceCount">0</strong><span>opplevelser</span></div></div>
       </div>
-
-      <div class="section-head"><span>SONER</span><button class="link-btn add-wine">+ Legg til</button></div>
-      <div class="zones">
-        <article class="zone white-zone"><div class="dot white"></div><div><h3>Hvit sone</h3><p>Hvitvin og musserende</p></div><div class="zone-meta"><strong id="whiteCount">0</strong><span>8 °C</span></div></article>
-        <article class="zone rose-zone"><div class="dot rose"></div><div><h3>Rosésone</h3><p>Rosévin</p></div><div class="zone-meta"><strong id="roseCount">0</strong><span>8 °C</span></div></article>
-        <article class="zone red-zone"><div class="dot red"></div><div><h3>Rød sone</h3><p>Rødvin og portvin</p></div><div class="zone-meta"><strong id="redCount">0</strong><span>16 °C</span></div></article>
-      </div>
-
-      <div class="section-head"><span>SIST LAGT TIL</span></div>
-      <div id="recentWines" class="card empty">Ingen viner registrert ennå. Legg til den første flasken.</div>
+      <div class="toolbar"><input id="wineSearch" type="search" placeholder="Søk i mine viner"><select id="wineTypeFilter" aria-label="Filtrer på vintype"><option value="">Alle typer</option><option>Rødvin</option><option>Hvitvin</option><option>Rosévin</option><option>Musserende</option><option>Champagne</option><option>Dessertvin</option><option>Portvin</option></select></div>
+      <div class="chips" role="group" aria-label="Visning"><button class="chip active" data-filter="all">Alle</button><button class="chip" data-filter="favorite">Favoritter</button><button class="chip" data-filter="again">Vil kjøpe igjen</button></div>
+      <div id="wineList" class="wine-grid"></div>
     </section>
-
-    <section id="winesView" class="view">
-      <div class="section-head"><span>MINE VINER</span><button class="link-btn add-wine">+ Legg til</button></div>
-      <div class="filters">
-        <input id="wineSearch" placeholder="Søk i vinskapet" />
-        <select id="wineTypeFilter"><option value="">Alle typer</option><option>Rødvin</option><option>Hvitvin</option><option>Rosévin</option><option>Musserende</option><option>Champagne</option><option>Dessertvin</option><option>Portvin</option></select>
-      </div>
-      <div id="wineList" class="list"></div>
+    <section id="experiencesView" class="view">
+      <div class="section-title"><div><span class="eyebrow">SAMLE MINNENE</span><h2>Vinopplevelser</h2></div><button id="addExperienceBtn" class="secondary small">+ Ny opplevelse</button></div>
+      <p class="intro">Samle flere viner fra en tur, middag, vinkveld eller et besøk på en vingård.</p><div id="experienceList" class="experience-grid"></div>
     </section>
-
-    <section id="tripsView" class="view">
-      <div class="section-head"><span>MINE TURER</span><button id="addTripBtn" class="link-btn">+ Ny tur</button></div>
-      <div id="tripList" class="list"></div>
-    </section>
-
     <section id="settingsView" class="view">
-      <div class="section-head"><span>INNSTILLINGER</span></div>
-      <div class="card settings-card">
-        <h3>Backup og eksport</h3>
-        <p>Viner og turer lagres i en egen lokal database i nettleseren. Ta jevnlig backup.</p>
-        <div class="button-row"><button id="backupJsonBtn" class="primary small">Eksporter JSON</button><button id="backupCsvBtn" class="secondary small">Eksporter CSV</button></div>
-      </div>
-      <div class="card settings-card">
-        <h3>Importer backup</h3>
-        <p>Gjenopprett en tidligere JSON-backup.</p>
-        <button id="importBtn" class="secondary small">Importer JSON</button>
-        <input id="importInput" type="file" accept="application/json" hidden />
-      </div>
-      <div class="card settings-card">
-        <h3>Vinmonopolet</h3>
-        <p>Vinmonopolet brukes som foretrukket datakilde. API-nøkkelen skal ligge som <code>VINMONOPOLET_API_KEY</code> på serveren.</p>
-      </div>
+      <div class="section-title"><div><span class="eyebrow">TRYGG LAGRING</span><h2>Innstillinger</h2></div></div>
+      <article class="panel"><h3>Backup og eksport</h3><p>Vinene og bildene lagres lokalt på denne enheten. Ta jevnlig backup.</p><div class="button-row"><button id="backupJsonBtn" class="primary small">Eksporter backup</button><button id="backupCsvBtn" class="secondary small">Eksporter CSV</button></div></article>
+      <article class="panel"><h3>Importer backup</h3><p>Gjenopprett en tidligere JSON-backup.</p><button id="importBtn" class="secondary small">Velg backup</button><input id="importInput" type="file" accept="application/json" hidden></article>
+      <article class="panel note-panel"><strong>Ingen vinsøk</strong><p>Min vinbok bruker ikke Vinmonopolet, strekkode eller etikettavlesning. Du bestemmer selv hva som skal registreres.</p></article>
     </section>
   </main>
-
   <nav class="bottomnav">
-    <button data-view="overviewView" class="active">⌂<span>Oversikt</span></button>
-    <button data-view="winesView">◇<span>Viner</span></button>
-    <button id="quickAdd">＋<span>Legg til</span></button>
-    <button data-view="tripsView">⌖<span>Mine turer</span></button>
-    <button data-view="settingsView">⚙<span>Innstillinger</span></button>
+    <button data-view="winesView" class="active"><span class="nav-icon">◇</span><span>Mine viner</span></button><button data-view="experiencesView"><span class="nav-icon">⌖</span><span>Opplevelser</span></button><button id="quickAdd" class="quick-add"><span class="plus">＋</span><span>Ny vin</span></button><button data-view="settingsView"><span class="nav-icon">⚙</span><span>Innstillinger</span></button>
   </nav>
-
-  <div id="wineModal" class="modal" aria-hidden="true">
-    <div class="sheet">
-      <button class="close" data-close="wineModal" aria-label="Lukk">×</button>
-      <div class="eyebrow">NY FLASKE</div>
-      <h2>Legg til vin</h2>
-
-      <div class="auto-card">
-        <h3>Finn vinen automatisk</h3>
-        <p>Ta bilde av etiketten, eller skriv inn navnet på vinen. Appen søker etter riktig flaske og fyller inn opplysningene automatisk.</p>
-        <button id="labelBtn" type="button" class="scan label">◉ <span>Ta bilde av etikett</span></button>
-        <input id="labelInput" type="file" accept="image/*" capture="environment" hidden />
-        <div id="scanStatus" class="status" role="status" aria-live="polite">Ta bilde av etiketten.</div>
-        <img id="scanPreview" class="preview" alt="Forhåndsvisning" hidden />
-        <div id="labelCorrection">
-          <label>Søk på vinens navn
-            <input id="labelSearchText" type="search" autocomplete="off" placeholder="F.eks. produsent, vinnavn og årgang" />
-          </label>
-          <button id="labelSearchBtn" type="button" class="primary small">Finn vin og fyll ut</button>
-        </div>
-        <div id="candidateList" class="candidate-list"></div>
-      </div>
-
-      <form id="wineForm">
-        <input id="wineId" type="hidden" />
-        <label>Navn på vin<input id="name" placeholder="F.eks. Barolo" required /></label>
-        <label>Type<select id="type"><option>Rødvin</option><option>Hvitvin</option><option>Rosévin</option><option>Musserende</option><option>Champagne</option><option>Dessertvin</option><option>Portvin</option></select></label>
-        <label>Årgang<input id="vintage" inputmode="numeric" placeholder="2022" /></label>
-        <label>Produsent<input id="producer" /></label>
-        <label>Land<input id="country" /></label>
-        <label>Region<input id="region" /></label>
-        <label>Druer<input id="grapes" /></label>
-        <label>Pris (kr)<input id="price" inputmode="decimal" /></label>
-        <label>Antall<input id="quantity" inputmode="numeric" value="1" /></label>
-        <label>Notat<textarea id="notes" rows="3"></textarea></label>
-        <input id="barcode" type="hidden" />
-        <input id="productId" type="hidden" />
-        <input id="labelImage" type="hidden" />
-        <button class="primary" type="submit">Lagre i vinskapet</button>
-      </form>
-    </div>
-  </div>
-
-  <div id="tripModal" class="modal" aria-hidden="true">
-    <div class="sheet compact">
-      <button class="close" data-close="tripModal" aria-label="Lukk">×</button>
-      <div class="eyebrow">MINNER</div><h2>Ny tur</h2>
-      <form id="tripForm">
-        <label>Navn på tur<input id="tripName" required placeholder="F.eks. Piemonte 2026" /></label>
-        <div class="trip-photo-field">
-          <span class="field-label">Bilde</span>
-          <div class="photo-actions">
-            <button id="tripCameraBtn" type="button" class="photo-choice camera-choice">◉ Ta bilde</button>
-            <button id="tripGalleryBtn" type="button" class="photo-choice gallery-choice">▧ Velg fra bilder</button>
-          </div>
-          <input id="tripImageCamera" type="file" accept="image/*" capture="environment" hidden />
-          <input id="tripImageGallery" type="file" accept="image/*" hidden />
-          <div id="tripImageName" class="photo-name">Ingen bilde valgt</div>
-          <img id="tripImagePreview" class="trip-preview" alt="Forhåndsvisning av turbilde" hidden />
-        </div>
-        <label>Notat<textarea id="tripText" rows="5"></textarea></label>
-        <button class="primary" type="submit">Lagre tur</button>
-      </form>
-    </div>
-  </div>
-
-  <div id="tripDetailModal" class="modal" aria-hidden="true">
-    <div class="sheet trip-detail-sheet">
-      <button class="close" data-close="tripDetailModal" aria-label="Lukk">×</button>
-      <div class="eyebrow">MIN TUR</div>
-      <h2 id="tripDetailTitle">Tur</h2>
-      <img id="tripDetailImage" class="trip-detail-image" alt="Hovedbilde fra turen" hidden />
-      <p id="tripDetailText" class="trip-detail-text"></p>
-      <div class="trip-wine-heading">
-        <div><span class="eyebrow">VINER PÅ TUREN</span><strong id="tripWineCount">0 viner</strong></div>
-        <button id="addTripWineBtn" type="button" class="primary small">+ Legg til vin</button>
-      </div>
-      <div id="tripWineList" class="trip-wine-list"></div>
-    </div>
-  </div>
-
-  <div id="tripWineModal" class="modal" aria-hidden="true">
-    <div class="sheet compact">
-      <button class="close" data-close="tripWineModal" aria-label="Lukk">×</button>
-      <div class="eyebrow">VINMINNE</div><h2 id="tripWineFormTitle">Legg til vin</h2>
-      <form id="tripWineForm">
-        <label>Navn på vin<input id="tripWineName" required placeholder="F.eks. Albariño" /></label>
-        <label>Årgang<input id="tripWineVintage" inputmode="numeric" placeholder="2023" /></label>
-        <div class="trip-photo-field">
-          <span class="field-label">Bilde av vinen</span>
-          <div class="photo-actions">
-            <button id="tripWineCameraBtn" type="button" class="photo-choice camera-choice">◉ Ta bilde</button>
-            <button id="tripWineGalleryBtn" type="button" class="photo-choice gallery-choice">▧ Velg fra bilder</button>
-          </div>
-          <input id="tripWineImageCamera" type="file" accept="image/*" capture="environment" hidden />
-          <input id="tripWineImageGallery" type="file" accept="image/*" hidden />
-          <div id="tripWineImageName" class="photo-name">Ingen bilde valgt</div>
-          <img id="tripWineImagePreview" class="trip-preview" alt="Forhåndsvisning av vinbilde" hidden />
-        </div>
-        <label>Notat<textarea id="tripWineText" rows="4" placeholder="Hva smakte du, og hva vil du huske?"></textarea></label>
-        <button id="tripWineSaveBtn" class="primary" type="submit">Lagre vin på turen</button>
-      </form>
-    </div>
-  </div>
-
-  <div id="tripWineDetailModal" class="modal" aria-hidden="true">
-    <div class="sheet compact trip-wine-detail-sheet">
-      <button class="close" data-close="tripWineDetailModal" aria-label="Lukk">×</button>
-      <div class="eyebrow">VINMINNE</div>
-      <h2 id="tripWineDetailName">Vin</h2>
-      <img id="tripWineDetailImage" class="trip-wine-detail-image" alt="Bilde av vinen" hidden />
-      <div id="tripWineDetailVintage" class="trip-wine-detail-vintage" hidden></div>
-      <p id="tripWineDetailText" class="trip-wine-detail-text" hidden></p>
-      <button id="tripWineDetailEditBtn" type="button" class="primary">Rediger vin</button>
-    </div>
-  </div>
-</body>
-</html>
+  <div id="wineModal" class="modal" aria-hidden="true"><div class="sheet"><button class="close" data-close="wineModal" aria-label="Lukk">×</button><span class="eyebrow">VINMINNE</span><h2 id="wineFormTitle">Legg til vin</h2>
+    <form id="wineForm"><input id="wineId" type="hidden">
+      <div class="photo-field"><span class="field-label">Bilde av vinen</span><div class="photo-actions"><button id="wineCameraBtn" type="button" class="photo-choice dark">◉ Ta bilde</button><button id="wineGalleryBtn" type="button" class="photo-choice">▧ Velg fra bilder</button></div><input id="wineImageCamera" type="file" accept="image/*" capture="environment" hidden><input id="wineImageGallery" type="file" accept="image/*" hidden><img id="wineImagePreview" class="photo-preview" alt="Forhåndsvisning" hidden><input id="wineImage" type="hidden"></div>
+      <label>Navn på vin<input id="name" required placeholder="F.eks. Barolo"></label>
+      <div class="form-grid"><label>Årgang<input id="vintage" inputmode="numeric" placeholder="2022"></label><label>Type<select id="type"><option>Rødvin</option><option>Hvitvin</option><option>Rosévin</option><option>Musserende</option><option>Champagne</option><option>Dessertvin</option><option>Portvin</option></select></label></div>
+      <label>Produsent<input id="producer"></label><div class="form-grid"><label>Land<input id="country"></label><label>Område<input id="region"></label></div><label>Druetype<input id="grapes"></label>
+      <div class="form-grid"><label>Dato smakt<input id="tastedAt" type="date"></label><label>Sted<input id="place" placeholder="Hjemme, restaurant …"></label></div><label>Hvem delte du vinen med?<input id="people"></label>
+      <label>Vinopplevelse<select id="experienceId"><option value="">Ingen opplevelse</option></select></label><label>Din vurdering<select id="rating"><option value="">Ikke vurdert</option><option value="1">★</option><option value="2">★★</option><option value="3">★★★</option><option value="4">★★★★</option><option value="5">★★★★★</option></select></label>
+      <label>Smaksnotat<textarea id="notes" rows="4" placeholder="Hva smakte du, og hva vil du huske?"></textarea></label><div class="checks"><label><input id="favorite" type="checkbox"> Favoritt</label><label><input id="buyAgain" type="checkbox"> Vil kjøpe igjen</label></div><button class="primary" type="submit">Lagre vin</button>
+    </form></div></div>
+  <div id="wineDetailModal" class="modal" aria-hidden="true"><div class="sheet detail-sheet"><button class="close" data-close="wineDetailModal" aria-label="Lukk">×</button><img id="detailImage" class="detail-image" alt="Bilde av vinen" hidden><span id="detailType" class="badge"></span><h2 id="detailName">Vin</h2><div id="detailMeta" class="detail-meta"></div><div id="detailRating" class="stars"></div><p id="detailNotes" class="detail-notes"></p><div id="detailFlags" class="flag-row"></div><div class="button-row"><button id="detailEditBtn" class="primary">Rediger</button><button id="detailDeleteBtn" class="danger-light">Slett</button></div></div></div>
+  <div id="experienceModal" class="modal" aria-hidden="true"><div class="sheet compact"><button class="close" data-close="experienceModal" aria-label="Lukk">×</button><span class="eyebrow">VINOPPLEVELSE</span><h2 id="experienceFormTitle">Ny opplevelse</h2><form id="experienceForm"><input id="experienceEditId" type="hidden"><label>Navn<input id="experienceName" required placeholder="F.eks. Toscana 2026"></label><label>Dato<input id="experienceDate" type="date"></label><div class="photo-field"><span class="field-label">Hovedbilde</span><div class="photo-actions"><button id="experienceCameraBtn" type="button" class="photo-choice dark">◉ Ta bilde</button><button id="experienceGalleryBtn" type="button" class="photo-choice">▧ Velg fra bilder</button></div><input id="experienceImageCamera" type="file" accept="image/*" capture="environment" hidden><input id="experienceImageGallery" type="file" accept="image/*" hidden><img id="experienceImagePreview" class="photo-preview" alt="Forhåndsvisning" hidden><input id="experienceImage" type="hidden"></div><label>Notat<textarea id="experienceText" rows="5" placeholder="Fortell litt om opplevelsen"></textarea></label><button class="primary" type="submit">Lagre opplevelse</button></form></div></div>
+  <div id="experienceDetailModal" class="modal" aria-hidden="true"><div class="sheet"><button class="close" data-close="experienceDetailModal" aria-label="Lukk">×</button><img id="experienceDetailImage" class="experience-detail-image" alt="Hovedbilde" hidden><span class="eyebrow">VINOPPLEVELSE</span><h2 id="experienceDetailTitle"></h2><div id="experienceDetailDate" class="muted"></div><p id="experienceDetailText" class="detail-notes"></p><div class="experience-actions"><button id="experienceAddWineBtn" class="primary small">+ Legg til vin</button><button id="experienceEditBtn" class="secondary small">Rediger</button><button id="experienceDeleteBtn" class="danger-text">Slett</button></div><h3 class="subheading">Viner i opplevelsen</h3><div id="experienceWineList" class="wine-grid compact-grid"></div></div></div>
+</body></html>
