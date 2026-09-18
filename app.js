@@ -8,6 +8,7 @@ function today(){return new Date().toISOString().slice(0,10)}
 function formatDate(v){if(!v)return '';const d=new Date(`${v}T12:00:00`);return Number.isNaN(d.getTime())?v:new Intl.DateTimeFormat('nb-NO',{day:'numeric',month:'long',year:'numeric'}).format(d)}
 function openModal(id){$(id).classList.add('open');$(id).setAttribute('aria-hidden','false')}
 function closeModal(id){$(id).classList.remove('open');$(id).setAttribute('aria-hidden','true')}
+function closeAllModals(){document.querySelectorAll('.modal.open').forEach(m=>closeModal(m.id))}
 function store(name,mode='readonly'){return db.transaction(name,mode).objectStore(name)}
 function getAll(name){return new Promise((r,j)=>{const q=store(name).getAll();q.onsuccess=()=>r(q.result);q.onerror=()=>j(q.error)})}
 function put(name,value){return new Promise((r,j)=>{const q=store(name,'readwrite').put(value);q.onsuccess=()=>r(value);q.onerror=()=>j(q.error)})}
@@ -56,9 +57,9 @@ function csvCell(v){return `"${String(v??'').replaceAll('"','""')}"`}
 
 document.addEventListener('DOMContentLoaded',async()=>{
   try{await openDb();await migrateOldTripWines();await render()}catch(e){alert('Appen kunne ikke åpne den lokale databasen.')}
-  document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.querySelectorAll('[data-view]').forEach(x=>x.classList.remove('active'));$(b.dataset.view).classList.add('active');b.classList.add('active');scrollTo(0,0)});
+  document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{closeAllModals();document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.querySelectorAll('[data-view]').forEach(x=>x.classList.remove('active'));$(b.dataset.view).classList.add('active');b.classList.add('active');scrollTo(0,0)});
   document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>closeModal(b.dataset.close));document.querySelectorAll('.modal').forEach(m=>m.onclick=e=>{if(e.target===m)closeModal(m.id)});
-  const newWine=async(experienceId='')=>{const travel=experienceId?(await getAll('trips')).find(x=>x.id===experienceId):null;resetWineForm(experienceId,travel?.name||'');openModal('wineModal')};$('headerAdd').onclick=()=>newWine();$('quickAdd').onclick=()=>newWine();
+  const newWine=async(experienceId='')=>{const travel=experienceId?(await getAll('trips')).find(x=>x.id===experienceId):null;resetWineForm(experienceId,travel?.name||'');openModal('wineModal')};$('headerAdd').onclick=()=>{closeAllModals();newWine()};$('quickAdd').onclick=()=>{closeAllModals();newWine()};
   $('addExperienceBtn').onclick=()=>{resetExperienceForm();openModal('experienceModal')};
   $('wineSearch').oninput=render;$('wineTypeFilter').onchange=render;document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{activeFilter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x===b));render()});
   $('wineList').onclick=e=>{const b=e.target.closest('[data-wine]');if(b)openWineDetail(b.dataset.wine)};

@@ -7,3 +7,8 @@
 .travel-badge{display:inline-block;margin-bottom:8px;padding:5px 8px;border-radius:99px;background:#e7edf5;color:#334f6b;font-size:10px;font-weight:900;letter-spacing:.12em}
 .experience-card{border-top:5px solid #496781}.wine-open{touch-action:manipulation}
 .wine-cta{display:block;padding:10px 14px;border-top:1px solid var(--line);color:var(--wine);font-size:12px;font-weight:900;text-align:right}
+.bottomnav{z-index:200}
+.modal{padding-bottom:calc(68px + env(safe-area-inset-bottom))}
+#wineModal{z-index:150}
+#wineDetailModal{z-index:160}
+.modal .sheet{max-height:calc(100vh - 86px - env(safe-area-inset-bottom));padding-bottom:30px}
